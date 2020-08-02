@@ -4,9 +4,16 @@
 use rocket::http::RawStr;
 use serde::Serialize;
 use rocket_contrib::json::Json;
+use rocket_contrib::databases::diesel;
 
 
 #[macro_use] extern crate rocket;
+#[macro_use] extern crate rocket_contrib;
+
+
+#[database("people")]
+struct PeopleDBConn(diesel::mysql::MysqlConnection);
+
 
 #[get("/")]
 fn index() -> &'static str {
@@ -16,6 +23,11 @@ fn index() -> &'static str {
 #[derive(Serialize)]
 struct Person {
 	name: String,
+}
+
+fn get_pronouns_from_db(conn: &diesel::mysql::MysqlConnection, name: &String) -> Pronouns {
+	println!("pretending a little");
+	Pronouns { subject: "they".into(), object: "them".into(), posessive: "they".into() }
 }
 
 #[derive(Serialize)]
@@ -32,11 +44,14 @@ impl Person {
 }
 
 #[get("/hello/<name>")]
-fn hello(name: &RawStr) -> Json<Person> {
+fn hello(conn: PeopleDBConn, name: &RawStr) -> Json<Person> {
 	let person = Person::new(name.as_str());
+	let pronouns = get_pronouns_from_db(&*conn, &person.name);
 	Json(person)
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![index, hello]).launch();
+    rocket::ignite()
+             .attach(PeopleDBConn::fairing())
+             .mount("/", routes![index, hello]).launch();
 }
