@@ -15,7 +15,14 @@ fn index() -> &'static str {
 
 #[derive(Serialize)]
 struct Person {
-	name: String
+	name: String,
+}
+
+#[derive(Serialize)]
+struct Pronouns {
+	subject: String,
+	object: String,
+	posessive: String,
 }
 
 impl Person {
