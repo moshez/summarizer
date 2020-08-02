@@ -2,5 +2,6 @@
 
 use diesel::prelude::*;
 
-mod models;
-mod schema;
+pub mod models;
+pub mod schema;
+pub mod queries;
