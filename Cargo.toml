@@ -10,3 +10,4 @@ edition = "2018"
 rocket = "*"
 rocket_contrib = {version = "*", features = ["diesel_mysql_pool"] }
 serde = {version = "*", features = ["derive"] }
+diesel = "*"
